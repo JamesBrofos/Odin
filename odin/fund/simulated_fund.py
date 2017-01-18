@@ -44,6 +44,8 @@ class SimulatedFund(Fund):
         # Compute the performance of the fund as a aggregation of the individual
         # portfolios.
         self.history["returns"] = self.history["equity"].pct_change()
-        m = m.append(metrics.performance_summary(self.history, "fund"))
+        m = m.append(metrics.performance_summary(
+            self.history, self.fund_handler.fund_id
+        ))
 
         return m

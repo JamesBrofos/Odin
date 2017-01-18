@@ -16,13 +16,16 @@ maximum_capacity = 1
 rebalance_period = 1
 manage_period = 1
 
+# Account and fund identifiers.
+pid = "buy_and_hold_example_portfolio"
+fid = "buy_and_hold_example_fund"
+
 # Number of prior trading days to download at the start of the time series.
 n_init = 10
-# Set an identifier for the portfolio.
-pid = "long_buy_and_hold"
+# Set an account for the portfolio.
 account = "<YOUR IB PAPER TRADING ID>"
 
 # The amount of time to wait before requesting more market data.
-delay = 45
+delay = 10
 # Set verbosity level.
 verbosity = 3

@@ -6,7 +6,7 @@ from strategy import RebalanceDemoStrategy
 from handlers import (
     events, dh, eh, posh_long, posh_short, porth_long, porth_short
 )
-from settings import rebalance_period, manage_period, start_date, verbosity
+from settings import rebalance_period, manage_period, start_date, verbosity, fid
 
 
 # Generate objects for the portfolios and strategies that the fund will trade.
@@ -20,7 +20,7 @@ strategies = [
 ]
 # Create the fund and fund handler objects.
 fh = FundHandler(
-    events, strategies, rebalance_period, manage_period, start_date
+    events, strategies, rebalance_period, manage_period, start_date, fid
 )
 fund = SimulatedFund(dh, eh, fh, verbosity)
 

@@ -2,9 +2,10 @@ from odin.portfolio import InteractiveBrokersPortfolio
 from odin.utilities import params
 from odin.handlers.fund_handler import FundHandler
 from odin.fund import Fund
+from odin_securities.queries import exists
 from handlers import events, dh, eh, posh_long, porth_long
 from settings import (
-    rebalance_period, manage_period, start_date, verbosity, delay, account
+    rebalance_period, manage_period, start_date, verbosity, delay, account, fid
 )
 from strategy import BuySellStrategy
 
@@ -17,8 +18,13 @@ strategies = [
     BuySellStrategy(params.Directions.long_dir, portfolios[0]),
 ]
 # Create the fund and fund handler objects.
-fh = FundHandler(
-    events, strategies, rebalance_period, manage_period, start_date
-)
+if not exists.fund(fid):
+    fh = FundHandler.from_database_fund(fid, events, strategies)
+else:
+    fh = FundHandler(
+        events, strategies, rebalance_period, manage_period, start_date, fid
+    )
+    fh.to_database_fund()
+
 fund = Fund(dh, eh, fh, delay, verbosity)
 

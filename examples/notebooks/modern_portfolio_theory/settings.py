@@ -21,6 +21,7 @@ manage_period = 1
 n_init = 63
 # Set an identifier for the portfolio.
 pid = "modern_portfolio"
+fid = "fund"
 # Assume that transacting shares moves the price by five-hundredths of a basis
 # point.
 transaction_cost = 0.0005

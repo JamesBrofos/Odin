@@ -6,7 +6,7 @@ from odin.utilities.finance import Indices
 
 # Start date and end date of the time series.
 start_date = dt.datetime(2012, 1, 1)
-end_date = dt.datetime(2012, 12, 21)
+end_date = dt.datetime(2016, 12, 21)
 # Only trade the S&P 500 ETF.
 symbols = [Indices.sp_500_etf.value]
 
@@ -21,6 +21,7 @@ manage_period = 1
 n_init = 10
 # Set an identifier for the portfolio.
 pid = "long_buy_and_hold"
+fid = "fund"
 # Assume that transacting shares moves the price by five-hundredths of a basis
 # point.
 transaction_cost = 0.0005

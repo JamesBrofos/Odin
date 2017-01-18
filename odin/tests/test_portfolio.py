@@ -17,7 +17,9 @@ class PortfolioTest(unittest.TestCase):
         dh = DatabaseDataHandler(q, sh, start, end, 10)
         max_cap = 1
         capital = 100000.0
-        ph = PortfolioHandler(max_cap, dh, "test_portfolio_id", capital)
+        ph = PortfolioHandler(
+            max_cap, dh, "test_portfolio_id", capital, "test_fund_id"
+        )
         ph.to_database_portfolio()
 
     def test_from_database_portfolio(self):

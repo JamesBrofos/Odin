@@ -29,6 +29,7 @@ eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
 # keeping track of capital.
 posh_long = ModernPortfolioPositionHandler(dh, 0.4)
 porth_long = PortfolioHandler(
-    settings.maximum_capacity, dh, "long", settings.init_capital
+    settings.maximum_capacity, dh, settings.pid, settings.init_capital,
+    settings.fid
 )
 

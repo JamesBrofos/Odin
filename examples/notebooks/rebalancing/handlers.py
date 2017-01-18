@@ -19,9 +19,11 @@ eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
 posh_long = FixedPositionHandler(settings.buy_size, settings.sell_size)
 posh_short = FixedPositionHandler(settings.buy_size, settings.sell_size)
 porth_long = PortfolioHandler(
-    settings.maximum_capacity, dh, "long", settings.init_capital
+    settings.maximum_capacity, dh, settings.long_pid, settings.init_capital,
+    settings.fid
 )
 porth_short = PortfolioHandler(
-    settings.maximum_capacity, dh, "short", settings.init_capital
+    settings.maximum_capacity, dh, settings.short_pid, settings.init_capital,
+    settings.fid
 )
 

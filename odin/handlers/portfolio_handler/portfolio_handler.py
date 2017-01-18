@@ -34,12 +34,13 @@ class PortfolioHandler(EquityMixin):
     """
     def __init__(
             self, maximum_capacity, data_handler, portfolio_id, capital,
-            filled_positions=None
+            fund_id, filled_positions=None
     ):
         """Initialize parameters of the portfolio handler object."""
         self.maximum_capacity = maximum_capacity
         self.data_handler = data_handler
         self.portfolio_id = portfolio_id
+        self.fund_id = fund_id
         self.capital = capital
         self.filled_positions = filled_positions if filled_positions else {}
         self.pending_positions = {}
@@ -57,7 +58,8 @@ class PortfolioHandler(EquityMixin):
         # portfolio already exists in the database.
         does_not_exist = exists.portfolio(self.portfolio_id)
         if does_not_exist:
-            inserts.portfolio(self)
+            fid = gets.id_for_fund(self.fund_id)
+            inserts.portfolio(self, fid)
         else:
             pid = gets.id_for_portfolio(self.portfolio_id)
             updates.portfolio(self, pid)
@@ -88,6 +90,7 @@ class PortfolioHandler(EquityMixin):
         port = gets.portfolio(portfolio_id)
         max_cap, capital = port["maximum_capacity"], port["capital"]
         pid = port.name
+        fid = gets.fund_for_fund_id(port["fund_id"])["fund"].values[0]
         # Then get corresponding positions.
         positions = gets.positions_for_portfolio_id(pid)
         filled = {
@@ -96,7 +99,7 @@ class PortfolioHandler(EquityMixin):
         }
 
         return cls(
-            max_cap, data_handler, portfolio_id, capital, filled
+            max_cap, data_handler, portfolio_id, capital, fid, filled
         )
 
     @property

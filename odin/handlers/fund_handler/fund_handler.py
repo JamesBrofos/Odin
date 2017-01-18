@@ -1,3 +1,5 @@
+from odin_securities import conn
+from odin_securities.queries import gets, updates, exists, inserts
 from ...utilities import compute_days_elapsed
 from ...events import RebalanceEvent, ManagementEvent
 
@@ -13,7 +15,7 @@ class FundHandler(object):
     """
     def __init__(
             self, events, strategies, rebalance_period, manage_period,
-            date_entered
+            date_entered, fund_id
     ):
         """Initialize parameters of the fund handler object."""
         self.events = events
@@ -22,9 +24,46 @@ class FundHandler(object):
         self.rebalance_period = rebalance_period
         self.manage_period = manage_period
         self.date_entered = date_entered
+        self.fund_id = fund_id
         # Set the assets under management to be the sum of the capital
         # intitially contained in each of the constituent portfolios.
         self.aum = sum([p.portfolio_handler.capital for p in self.portfolios])
+
+    def to_database_fund(self):
+        """Insert the fund object into the Odin Securities master database.
+        """
+        does_not_exist = exists.fund(self.fund_id)
+        if does_not_exist:
+            inserts.fund(self)
+        else:
+            fid = gets.id_for_fund(self.fund_id)
+            updates.fund(self, fid)
+
+        conn.commit()
+
+    @classmethod
+    def from_database_fund(cls, fund_id, events, strategies):
+        """Create an instance of a fund handler object using the relevant data
+        from a fund database object. This is useful for preserving the state of
+        a fund between trading sessions.
+        """
+        fund = gets.fund(fund_id).iloc[0]
+        rebalance = fund["rebalance_period"]
+        manage = fund["manage_period"]
+        date_entered = fund["entry_date"]
+
+        # Check that every portfolio in the strategies has the same identifier
+        # as the fund.
+        fund_name = fund["fund"]
+        for s in strategies:
+            if s.portfolio.portfolio_handler.fund_id != fund_name:
+                raise ValueError(
+                    "Portfolio and fund identifier mismatch:\t{}\t{}".format(
+                        s.portfolio.portfolio_handler.fund_id, fund_name
+                    )
+                )
+
+        return cls(events, strategies, rebalance, manage, date_entered, fund_id)
 
     def process_market_event(self, market_event):
         """The fund processes market data after all of the portfolios have done

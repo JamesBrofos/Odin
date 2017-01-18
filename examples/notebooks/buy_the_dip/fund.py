@@ -4,7 +4,7 @@ from odin.handlers.fund_handler import FundHandler
 from odin.fund import SimulatedFund
 from odin.strategy.templates import BuyAndHoldStrategy
 from handlers import events, dh, eh, posh, porth, posh_bench, porth_bench
-from settings import rebalance_period, manage_period, start_date, verbosity
+from settings import rebalance_period, manage_period, start_date, verbosity, fid
 from strategy import BuyTheDipStrategy, BenchmarkBuyAndHoldStrategy
 
 
@@ -19,7 +19,7 @@ strategies = [
 ]
 # Create the fund and fund handler objects.
 fh = FundHandler(
-    events, strategies, rebalance_period, manage_period, start_date
+    events, strategies, rebalance_period, manage_period, start_date, fid
 )
 fund = SimulatedFund(dh, eh, fh, verbosity)
 

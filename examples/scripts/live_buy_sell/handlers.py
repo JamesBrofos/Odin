@@ -29,11 +29,11 @@ eh = InteractiveBrokersExecutionHandler(events)
 # during trading. Also create a portfolio handler to manage transactions and
 # keeping track of capital.
 posh_long = EqualEquityPositionHandler(settings.maximum_capacity, dh)
-long_pid = "long_buy_and_sell_example"
-if not exists.portfolio(long_pid):
-    porth_long = PortfolioHandler.from_database_portfolio(long_pid, dh)
+if not exists.portfolio(settings.pid):
+    porth_long = PortfolioHandler.from_database_portfolio(settings.pid, dh)
 else:
     porth_long = PortfolioHandler(
-        settings.maximum_capacity, dh, long_pid, settings.init_capital
+        settings.maximum_capacity, dh, settings.pid, settings.init_capital,
+        settings.fid
     )
 

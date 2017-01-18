@@ -29,13 +29,14 @@ eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
 # keeping track of capital.
 posh = EqualEquityPositionHandler(settings.maximum_capacity, dh)
 porth = PortfolioHandler(
-    settings.maximum_capacity, dh, settings.pid, settings.init_capital
+    settings.maximum_capacity, dh, settings.pid, settings.init_capital,
+    settings.fid
 )
 
 # Create another set of position and portfolio handlers to benchmark
 # performance.
 posh_bench = EqualEquityPositionHandler(1, dh)
 porth_bench = PortfolioHandler(
-    settings.maximum_capacity, dh, "bench", settings.init_capital
+    settings.maximum_capacity, dh, "bench", settings.init_capital, settings.fid
 )
 
