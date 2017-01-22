@@ -10,6 +10,10 @@ class AbstractSymbolHandler(object):
     """
     __metaclass__ = ABCMeta
 
+    def __init__(self, portfolio_handlers):
+        """Initialize parameters of the abstract symbol handler object."""
+        self.portfolio_handlers = portfolio_handlers
+
     @abstractmethod
     def select_symbols(self, date):
         """Select symbols to be processed during the next trading period. This
@@ -17,3 +21,12 @@ class AbstractSymbolHandler(object):
         which can be used to generate rankings of stocks subsequently.
         """
         raise NotImplementedError()
+
+    def append_positions(self, selected):
+        """"""
+        set_selected = set(selected)
+        for p in self.portfolio_handlers:
+            for pos in p.filled_positions:
+                set_selected.add(pos)
+
+        return list(set_selected)

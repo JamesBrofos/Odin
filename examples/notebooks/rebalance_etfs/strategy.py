@@ -1,27 +1,37 @@
 import pandas as pd
 from odin.strategy import AbstractStrategy
+from odin.strategy.templates import BuyAndHoldStrategy
 
 
-class RebalanceDemoStrategy(AbstractStrategy):
-    """Rebalance Demo Strategy Class
-    """
+class BuyAndHoldSpyderStrategy(BuyAndHoldStrategy):
+    def buy_indicator(self, feats):
+        return feats.name in ("SPY", )
+
+
+class RebalanceETFStrategy(AbstractStrategy):
+    def __init__(self, portfolio, direction):
+        """Initialize parameters of the buy and hold strategy object."""
+        super(RebalanceETFStrategy, self).__init__(portfolio)
+        self.direction = direction
+
+    def direction_indicator(self, feats):
+        """Implementation of abstract base class method."""
+        return self.direction
+
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""
         return True
 
     def sell_indicator(self, feats):
         """Implementation of abstract base class method."""
-        date = self.portfolio.data_handler.current_date
-        ph = self.portfolio.portfolio_handler
-        days_held = ph.filled_positions[
-            feats.name
-        ].compute_holding_period(date).days
-        
-        return days_held > 62
+        return False
 
     def exit_indicator(self, feats):
         """Implementation of abstract base class method."""
-        return False
+        symbol = feats.name
+        pos = self.portfolio.portfolio_handler.filled_positions[symbol]
+        date = self.portfolio.data_handler.current_date
+        return pos.compute_holding_period(date).days > 63
 
     def generate_features(self):
         """Implementation of abstract base class method."""

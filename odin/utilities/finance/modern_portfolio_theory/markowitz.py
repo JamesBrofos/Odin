@@ -6,7 +6,7 @@ from cvxopt.solvers import qp, options
 options["show_progress"] = False
 
 
-def modern_portfolio_solve(prices, omega=1.0):
+def solve_markowitz(prices, omega=1.0):
     """This method solves the modern portfolio theory quadratic program to
     deduce the optimal weight configuration. Subject to the constraint that the
     weights be non-negative and that they sum to one, modern portfolio theory

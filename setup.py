@@ -1,6 +1,7 @@
 import os
 from setuptools import setup, find_packages, Command
 
+
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
 # README file and 2) it's easier to type in the README file than to put a raw
@@ -25,7 +26,7 @@ class CleanCommand(Command):
 
 setup(
     name="odin",
-    version="1.03",
+    version="1.3",
     author="James Brofos",
     author_email="james@brofos.org",
     description="Algorithmic trading infrastructure in Python.",
@@ -33,6 +34,6 @@ setup(
     packages=find_packages(exclude="tests"),
     long_description=read("README.md"),
     cmdclass={
-        'clean': CleanCommand,
+        "clean": CleanCommand,
     }
 )

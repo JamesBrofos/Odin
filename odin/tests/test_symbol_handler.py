@@ -13,16 +13,16 @@ class SymbolHandlerTest(unittest.TestCase):
     def test_fixed_symbol_handler(self):
         q = EventsQueue()
         start, end = dt.datetime(2015, 1, 2), dt.datetime(2015, 1, 9)
-        symbols = [Indices.sp_100_etf, Indices.sp_500_etf]
-        sh = FixedSymbolHandler(symbols)
+        symbols = [Indices.sp_100_etf.value, Indices.sp_500_etf.value]
+        sh = FixedSymbolHandler(symbols, [])
         dh = DatabaseDataHandler(q, sh, start, end, 10)
-        self.assertEqual(sh.select_symbols(dh.current_date), symbols)
+        self.assertEqual(set(sh.select_symbols(dh.current_date)), set(symbols))
 
     def test_dollar_volume_symbol_handler(self):
         q = EventsQueue()
         start, end = dt.datetime(2015, 1, 2), dt.datetime(2015, 1, 9)
         symbols = [Indices.sp_100_etf, Indices.sp_500_etf]
-        sh = DollarVolumeSymbolHandler(1)
+        sh = DollarVolumeSymbolHandler(1, [], None)
         dh = DatabaseDataHandler(q, sh, start, end, 10)
         sel = set([s for s in sh.select_symbols(dh.current_date)])
         self.assertEqual(

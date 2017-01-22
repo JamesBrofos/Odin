@@ -10,11 +10,19 @@ from odin.handlers.data_handler.price_handler import DatabasePriceHandler
 import settings
 
 
+
+# Create a portfolio handler to manage transactions and keeping track of
+# capital.
+porth = PortfolioHandler(
+    settings.maximum_capacity, settings.pid, settings.init_capital,
+    settings.fid
+)
+
 # Events queue for handling market data, signals, orders, and fills.
 events = EventsQueue()
 # Symbol handler will determine which symbols will be processed during trading.
 # In this example, we will just trade the S&P 500 ETF (SPY).
-sh = FixedSymbolHandler(settings.symbols)
+sh = FixedSymbolHandler(settings.symbols, [porth])
 
 # Set up a price handler and a data handler to provide data to the trading
 # system.
@@ -24,12 +32,5 @@ dh = DatabaseDataHandler(
 # Execution handler executes trades.
 eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
 
-# The position handler determines how much of the asset should be purchased
-# during trading. Also create a portfolio handler to manage transactions and
-# keeping track of capital.
-posh_long = EqualEquityPositionHandler(settings.maximum_capacity, dh)
-porth_long = PortfolioHandler(
-    settings.maximum_capacity, dh, settings.pid, settings.init_capital,
-    settings.fid
-)
-
+# Position handler to determine how much of an asset to purchase.
+posh = EqualEquityPositionHandler(settings.maximum_capacity, dh)

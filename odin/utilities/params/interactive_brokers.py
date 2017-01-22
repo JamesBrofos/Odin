@@ -37,3 +37,12 @@ def ib_commission(quantity, price):
         c = maximum
 
     return c
+
+
+# Define a list of error codes that are silent.
+ib_silent_errors = set([
+    # HMDS data farm connection is OK:ushmds.
+    2106,
+    # Market data farm connection is OK:usfarm.
+    2104,
+])

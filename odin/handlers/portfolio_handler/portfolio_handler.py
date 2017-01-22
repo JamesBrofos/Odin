@@ -21,9 +21,6 @@ class PortfolioHandler(EquityMixin):
     maximum_capacity: Integer.
         An integer representing the maximum number of filled  positions that can
         be held by a portfolio at any given time.
-    data_handler: Object inheriting from the abstract data handler class.
-        This object supplies the data to update the prices of held positions and
-        provide new bar data with which to construct features.
     portfolio_id: String.
         A unique identifier assigned to the portfolio.
     capital: Float.
@@ -33,12 +30,11 @@ class PortfolioHandler(EquityMixin):
         corresponding fill representation.
     """
     def __init__(
-            self, maximum_capacity, data_handler, portfolio_id, capital,
+            self, maximum_capacity, portfolio_id, capital,
             fund_id, filled_positions=None
     ):
         """Initialize parameters of the portfolio handler object."""
         self.maximum_capacity = maximum_capacity
-        self.data_handler = data_handler
         self.portfolio_id = portfolio_id
         self.fund_id = fund_id
         self.capital = capital
@@ -56,8 +52,8 @@ class PortfolioHandler(EquityMixin):
         """
         # Either create an entry or update it depending on whether or not the
         # portfolio already exists in the database.
-        does_not_exist = exists.portfolio(self.portfolio_id)
-        if does_not_exist:
+        does_exist = exists.portfolio(self.portfolio_id)
+        if not does_exist:
             fid = gets.id_for_fund(self.fund_id)
             inserts.portfolio(self, fid)
         else:
@@ -72,7 +68,7 @@ class PortfolioHandler(EquityMixin):
         conn.commit()
 
     @classmethod
-    def from_database_portfolio(cls, portfolio_id, data_handler):
+    def from_database_portfolio(cls, portfolio_id):
         """Create an instance of a portfolio handler object using the relevant
         data from a portfolio database object. This is useful for preserving the
         state of a portfolio between sessions.
@@ -82,9 +78,6 @@ class PortfolioHandler(EquityMixin):
         portfolio_id: String.
             A portfolio identifier used to select the appropriate records from
             the database corresponding to this portfolio.
-        data_handler: Object inheriting from the abstract data handler class.
-            This object supplies the data to update the prices of held positions
-            and provide new bar data with which to construct features.
         """
         # First get portfolio attributes.
         port = gets.portfolio(portfolio_id)
@@ -98,9 +91,7 @@ class PortfolioHandler(EquityMixin):
             for p in positions
         }
 
-        return cls(
-            max_cap, data_handler, portfolio_id, capital, fid, filled
-        )
+        return cls(max_cap, portfolio_id, capital, fid, filled)
 
     @property
     def available_capacity(self):
@@ -252,9 +243,9 @@ class PortfolioHandler(EquityMixin):
         # TODO: Make sure this is correct with some rigorous test cases.
         p_chng = (price - filled.avg_price) / filled.avg_price
         if direction == Directions.long_dir:
-            value = (1 + p_chng) * filled.avg_price * quantity
+            value = (1.0 + p_chng) * filled.avg_price * quantity
         elif direction == Directions.short_dir:
-            value = (1 - p_chng) * filled.avg_price * quantity
+            value = (1.0 - p_chng) * filled.avg_price * quantity
 
         # Update the capital holdings of the portfolio.
         if trade_type in (TradeTypes.sell_trade, TradeTypes.exit_trade):
@@ -278,6 +269,8 @@ class PortfolioHandler(EquityMixin):
         """
         symbol = order_event.symbol
         self.pending_positions[symbol] = PendingPosition(
-            symbol, order_event.quantity, order_event.direction,
-            order_event.trade_type, order_event.portfolio_id
+            symbol,
+            order_event.direction,
+            order_event.trade_type,
+            order_event.portfolio_id
         )

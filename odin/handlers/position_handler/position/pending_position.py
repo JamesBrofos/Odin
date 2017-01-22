@@ -11,11 +11,10 @@ class PendingPosition(object):
     short the stock, and an identifier for the portfolio.
     """
     def __init__(
-            self, symbol, quantity, direction, trade_type, portfolio_id
+            self, symbol, direction, trade_type, portfolio_id
     ):
         """Initialize parameters of the pending position object."""
         self.symbol = symbol
-        self.quantity = quantity
         self.direction = direction
         self.portfolio_id = portfolio_id
         self.trade_type = trade_type

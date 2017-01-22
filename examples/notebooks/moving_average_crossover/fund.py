@@ -3,20 +3,24 @@ from odin.utilities import params
 from odin.handlers.fund_handler import FundHandler
 from odin.fund import SimulatedFund
 from odin.strategy.templates import BuyAndHoldStrategy
-from handlers import events, dh, eh, posh_long, porth_long
-from settings import rebalance_period, manage_period, start_date, verbosity, fid
+import strategy
+import settings
+import handlers
 
 
 # Generate objects for the portfolios and strategies that the fund will trade.
 portfolios = [
-    SimulatedPortfolio(dh, posh_long, porth_long),
+    SimulatedPortfolio(handlers.dh, handlers.posh, handlers.porth),
 ]
 strategies = [
-    BuyAndHoldStrategy(params.Directions.long_dir, portfolios[0]),
+    strategy.MovingAverageCrossoverStrategy(
+        portfolios[0], params.Directions.long_dir
+    ),
 ]
+
 # Create the fund and fund handler objects.
 fh = FundHandler(
-    events, strategies, rebalance_period, manage_period, start_date, fid
+    handlers.events, strategies, settings.start_date, settings.fid
 )
-fund = SimulatedFund(dh, eh, fh, verbosity)
+fund = SimulatedFund(handlers.dh, handlers.eh, fh, settings.verbosity)
 

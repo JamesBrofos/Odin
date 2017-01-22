@@ -1,3 +1,6 @@
-from .fixed_position_handler import FixedPositionHandler
+from .fixed_position_handler import (
+    FixedQuantityPositionHandler,
+    FixedWeightPositionHandler
+)
 from .equal_equity_position_handler import EqualEquityPositionHandler
-from .modern_portfolio_position_handler import ModernPortfolioPositionHandler
+from .markowitz_position_handler import MarkowitzPositionHandler

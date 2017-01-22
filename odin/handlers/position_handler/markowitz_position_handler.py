@@ -1,17 +1,20 @@
 from .abstract_position_handler import AbstractPositionHandler
 from ...utilities.params import PriceFields
-from ...utilities.finance import modern_portfolio_solve
+from ...utilities.finance.modern_portfolio_theory import solve_markowitz
 
 
-class ModernPortfolioPositionHandler(AbstractPositionHandler):
-    """Modern Portfolio Theory Position Handler Class
+class MarkowitzPositionHandler(AbstractPositionHandler):
+    """Markowitz Modern Portfolio Theory Position Handler Class
 
+    With periodic rebalancing, keeps the asset allocation of the portfolio in
+    agreement with the optimal allocation according to the Markowitz modern
+    portfolio theory.
     """
     def __init__(self, data_handler, omega=1.0):
         """Initialize parameters of the modern portfolio position handler
         object.
         """
-        super(ModernPortfolioPositionHandler, self).__init__()
+        super(MarkowitzPositionHandler, self).__init__()
         self.data_handler = data_handler
         self.omega = omega
 
@@ -21,8 +24,8 @@ class ModernPortfolioPositionHandler(AbstractPositionHandler):
         # amount of equity in the portfolio.
         capital, equity = portfolio_handler.capital, portfolio_handler.equity
         # Compute the weights for each asset for which we have bars.
-        bars = portfolio_handler.data_handler.bars["adj_price_close"]
-        series = modern_portfolio_solve(bars, self.omega)
+        bars = self.data_handler.bars["adj_price_close"]
+        series = solve_markowitz(bars, self.omega)
 
         try:
             spend = min(equity * series[symbol], capital)

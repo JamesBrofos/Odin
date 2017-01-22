@@ -15,11 +15,12 @@ class FixedSymbolHandler(AbstractSymbolHandler):
         An input specifying a particular list of tickers to which the dollar
         volume ordering should be restricted.
     """
-    def __init__(self, symbols):
+    def __init__(self, symbols, portfolio_handlers):
         """Initialize parameters of the fixed symbol handler object."""
+        super(FixedSymbolHandler, self).__init__(portfolio_handlers)
         self.symbols = symbols
 
     def select_symbols(self, date):
         """Implementation of abstract base class method."""
-        return self.symbols
+        return self.append_positions(self.symbols)
 

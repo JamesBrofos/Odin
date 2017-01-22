@@ -1,6 +1,7 @@
+import numpy as np
 from odin_securities import conn
 from odin_securities.queries import gets, updates, exists, inserts
-from ...utilities import compute_days_elapsed
+from ...utilities import compute_days_elapsed, period_dict
 from ...events import RebalanceEvent, ManagementEvent
 
 
@@ -14,8 +15,13 @@ class FundHandler(object):
     previous such event.
     """
     def __init__(
-            self, events, strategies, rebalance_period, manage_period,
-            date_entered, fund_id
+            self,
+            events,
+            strategies,
+            date_entered,
+            fund_id,
+            rebalance_period=None,
+            manage_period=None,
     ):
         """Initialize parameters of the fund handler object."""
         self.events = events
@@ -30,10 +36,9 @@ class FundHandler(object):
         self.aum = sum([p.portfolio_handler.capital for p in self.portfolios])
 
     def to_database_fund(self):
-        """Insert the fund object into the Odin Securities master database.
-        """
-        does_not_exist = exists.fund(self.fund_id)
-        if does_not_exist:
+        """Insert the fund object into the Odin Securities master database."""
+        does_exist = exists.fund(self.fund_id)
+        if not does_exist:
             inserts.fund(self)
         else:
             fid = gets.id_for_fund(self.fund_id)
@@ -63,7 +68,7 @@ class FundHandler(object):
                     )
                 )
 
-        return cls(events, strategies, rebalance, manage, date_entered, fund_id)
+        return cls(events, strategies, date_entered, fund_id, rebalance, manage)
 
     def process_market_event(self, market_event):
         """The fund processes market data after all of the portfolios have done
@@ -75,10 +80,12 @@ class FundHandler(object):
         positions.
         """
         # Extract the management and rebalancing time period indicators.
-        manage, rebalance = self.manage_period, self.rebalance_period
+        manage = period_dict.get(self.manage_period, 1)
+        rebalance = period_dict.get(self.rebalance_period, 1)
         # Compute the number of days that the fund has been trading.
         date = market_event.datetime
         n_days = compute_days_elapsed(self.date_entered, date)
+
         # Detect when it is time to rebalance the portfolio.
         will_rebalance = n_days % rebalance == 0 and rebalance > 1
         # Detect when it is time to take management fees from the fund.
@@ -108,10 +115,10 @@ class FundHandler(object):
         Periodic rebalancing keeps these equity levels approximately the same
         and is critical for market neutral strategies.
         """
-        equity = sum([p.portfolio_handler.equity for p in self.portfolios])
-        n_port = len(self.portfolios)
+        ports = self.portfolios
+        avg_equity = np.mean([p.portfolio_handler.equity for p in ports])
         for p in self.portfolios:
-            p.portfolio_handler.capital = equity / n_port
+            p.portfolio_handler.capital = avg_equity
 
     def manage(self):
         """At management events, a portion of the AUM and a portion of the gains
@@ -120,7 +127,7 @@ class FundHandler(object):
         """
         # Compute the equity value of the fund and record the number of
         # portfolios being traded.
-        equity = sum([p.portfolio_handler.equity for p in self.portfolios])
+        equity = np.sum([p.portfolio_handler.equity for p in self.portfolios])
         n_port = len(self.portfolios)
         # Only take a cut if we've exceeded a highwater mark.
         if equity > self.aum:

@@ -1,5 +1,6 @@
 import pandas as pd
 from odin.strategy import AbstractStrategy
+from odin.utilities.params import Directions
 
 
 class BuySellStrategy(AbstractStrategy):
@@ -9,6 +10,9 @@ class BuySellStrategy(AbstractStrategy):
     at every opportunity. This is just for testing functionality and isn't good
     for much else.
     """
+    def direction_indicator(self, feats):
+        return Directions.long_dir
+
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""
         return True

@@ -19,7 +19,8 @@ class AbstractDatabaseDataHandler(AbstractDataHandler):
     def __init__(
             self, events, symbol_handler, price_handler, n_init, current_date
     ):
-        """"""
+        """Initialize parameters of the abstract database data handler object.
+        """
         super(AbstractDatabaseDataHandler, self).__init__(
             events, symbol_handler, price_handler
         )

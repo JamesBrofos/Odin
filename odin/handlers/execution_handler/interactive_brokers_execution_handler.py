@@ -4,7 +4,7 @@ from ib.opt import ibConnection, Connection, message
 from ib.ext.Contract import Contract
 from ib.ext.Order import Order
 from .abstract_execution_handler import AbstractExecutionHandler
-from ...utilities.params import action_dict, IB, ib_commission
+from ...utilities.params import action_dict, IB, ib_commission, ib_silent_errors
 from ...utilities.mixins import ContractMixin
 from ...events import FillEvent
 
@@ -44,7 +44,8 @@ class InteractiveBrokersExecutionHandler(
         """Process errors from the Interactive Brokers Trader Workstation by
         displaying them on standard out.
         """
-        print("Interactive Brokers execution handler error: {}".format(msg))
+        if msg.errorCode not in ib_silent_errors:
+            print("Interactive Brokers execution handler error: {}".format(msg))
 
     def __reply_handler(self, msg):
         """This function handles responses from the TraderWorkstation server. It

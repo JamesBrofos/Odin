@@ -4,7 +4,7 @@ from time import sleep
 from email.mime.text import MIMEText
 from ib.opt import ibConnection, Connection, message
 from .abstract_portfolio import AbstractPortfolio
-from ..utilities.params import Directions, IB
+from ..utilities.params import Directions, IB, ib_silent_errors
 
 
 class InteractiveBrokersPortfolio(AbstractPortfolio):
@@ -83,7 +83,8 @@ class InteractiveBrokersPortfolio(AbstractPortfolio):
         msg: Interactive Brokers message object.
             An object containing the parameters of the error to be logged.
         """
-        print("Interactive Brokers portfolio error: {}".format(msg))
+        if msg.errorCode not in ib_silent_errors:
+            print("Interactive Brokers portfolio error: {}".format(msg))
 
     def process_post_events(self):
         """Save the portfolio state to the file system.

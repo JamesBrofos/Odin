@@ -18,9 +18,8 @@ class AbstractStrategy(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, direction, portfolio):
+    def __init__(self, portfolio):
         """Initialize parameters of the abstract strategy object."""
-        self.direction = direction
         self.portfolio = portfolio
 
     def generate_signals(self):
@@ -35,9 +34,10 @@ class AbstractStrategy(object):
         # Assign convenience variables that are constant across all elements of
         # the signal generating function.
         date = self.portfolio.data_handler.current_date
-        d = self.direction
+        # d = self.direction
         pid = self.portfolio.portfolio_handler.portfolio_id
         events = self.portfolio.data_handler.events
+        ph = self.portfolio.portfolio_handler
 
         # Create an indicator variable for whether or not the primary strategy
         # generates trading signals. This is only relevant when there is a
@@ -50,26 +50,30 @@ class AbstractStrategy(object):
         # by a user-specified priority.
         for stock in self.generate_priority(feats):
             stock_feat = feats.ix[stock]
-            if stock in self.portfolio.portfolio_handler.filled_positions:
+            if stock in ph.filled_positions:
                 # Process assets that are already held as positions.
-                trade_indicator = True
+                sell_trade_indicator = True
                 if self.sell_indicator(stock_feat):
                     trade_type = TradeTypes.sell_trade
                 elif self.exit_indicator(stock_feat):
                     trade_type = TradeTypes.exit_trade
                 else:
-                    trade_indicator = False
+                    sell_trade_indicator = False
 
-                if trade_indicator:
+                if sell_trade_indicator:
                     will_trade = True
-                    signal_event = SignalEvent(stock, trade_type, d, date, pid)
+                    direction = ph.filled_positions[stock].direction
+                    signal_event = SignalEvent(
+                        stock, trade_type, direction, date, pid
+                    )
                     events.put(signal_event)
             else:
                 # Process assets that are candidates to become new positions.
                 if self.buy_indicator(stock_feat):
+                    direction = self.direction_indicator(stock_feat)
                     will_trade = True
                     signal_event = SignalEvent(
-                        stock, TradeTypes.buy_trade, d, date, pid
+                        stock, TradeTypes.buy_trade, direction, date, pid
                     )
                     events.put(signal_event)
 
@@ -85,10 +89,17 @@ class AbstractStrategy(object):
         # signal for that position.
         for pos in self.portfolio.portfolio_handler.filled_positions.values():
             signal_event = SignalEvent(
-                pos.symbol, TradeTypes.exit_trade, self.direction, date,
+                pos.symbol, TradeTypes.exit_trade, pos.direction, date,
                 self.portfolio.portfolio_handler.portfolio_id
             )
             self.portfolio.data_handler.events.put(signal_event)
+
+    @abstractmethod
+    def direction_indicator(self, feats):
+        """Indicator of which direction (long or short) the strategy to trade a
+        specific asset.
+        """
+        raise NotImplementedError()
 
     @abstractmethod
     def buy_indicator(self, feats):

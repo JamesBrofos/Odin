@@ -13,12 +13,12 @@ class PortfolioTest(unittest.TestCase):
         q = EventsQueue()
         start, end = dt.datetime(2015, 1, 2), dt.datetime(2015, 1, 9)
         symbols = [Indices.sp_100_etf, Indices.sp_500_etf]
-        sh = FixedSymbolHandler(symbols)
+        sh = FixedSymbolHandler(symbols, [])
         dh = DatabaseDataHandler(q, sh, start, end, 10)
         max_cap = 1
         capital = 100000.0
         ph = PortfolioHandler(
-            max_cap, dh, "test_portfolio_id", capital, "test_fund_id"
+            max_cap, "test_portfolio_id", capital, "test_fund_id"
         )
         ph.to_database_portfolio()
 
@@ -27,9 +27,9 @@ class PortfolioTest(unittest.TestCase):
         q = EventsQueue()
         start, end = dt.datetime(2015, 1, 2), dt.datetime(2015, 1, 9)
         symbols = [Indices.sp_100_etf, Indices.sp_500_etf]
-        sh = FixedSymbolHandler(symbols)
+        sh = FixedSymbolHandler(symbols, [])
         dh = DatabaseDataHandler(q, sh, start, end, 10)
-        ph = PortfolioHandler.from_database_portfolio(pid, dh)
+        ph = PortfolioHandler.from_database_portfolio(pid)
         self.assertEqual(ph.capital, 100000.0)
         self.assertEqual(ph.maximum_capacity, 1)
         self.assertEqual(ph.portfolio_id, pid)

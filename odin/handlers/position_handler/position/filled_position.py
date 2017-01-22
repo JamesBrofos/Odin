@@ -20,13 +20,22 @@ class FilledPosition(PendingPosition):
     period, and the ticker symbol associated with the underlying asset.
     """
     def __init__(
-            self, symbol, quantity, direction, trade_type, portfolio_id,
-            date_entered, avg_price, buys=0, sells=0, avg_buys_price=0.0,
-            avg_sells_price=0.0, tot_commission=0.0
+            self,
+            symbol,
+            direction,
+            trade_type,
+            portfolio_id,
+            date_entered,
+            avg_price,
+            buys=0,
+            sells=0,
+            avg_buys_price=0.0,
+            avg_sells_price=0.0,
+            tot_commission=0.0
     ):
         """Initialize parameters of the position object."""
         super(FilledPosition, self).__init__(
-            symbol, quantity, direction, trade_type, portfolio_id
+            symbol, direction, trade_type, portfolio_id
         )
         self.date_entered = date_entered
 
@@ -36,7 +45,8 @@ class FilledPosition(PendingPosition):
 
         # Number of buys and sells.
         self.buys, self.sells = buys, sells
-        self.net = self.sells - self.buys
+        self.net = self.buys - self.sells
+        self.quantity = abs(self.net)
         # Price of buys and sells on average.
         self.avg_price = avg_price
         self.cost_basis = self.net * self.avg_price
@@ -161,10 +171,9 @@ class FilledPosition(PendingPosition):
         # Get identifiers for both the stock symbol and the portfolio.
         pid = gets.id_for_portfolio(self.portfolio_id)
         sid = gets.id_for_symbol(self.symbol)
-        # does_not_exist = cur.fetchone()[0]
-        does_not_exist = exists.position(sid, pid)
+        does_exist = exists.position(sid, pid)
         # Insert the position into the database.
-        if does_not_exist:
+        if not does_exist:
             inserts.position(self, sid, pid)
         else:
             updates.position(self, sid, pid)
@@ -186,7 +195,7 @@ class FilledPosition(PendingPosition):
             )
         else:
             ret = self.unrealized_pnl / self.cost_basis * np.sign(self.net)
-            return 1 + ret
+            return 1.0 + ret
 
     @property
     def relative_value(self):
@@ -208,7 +217,6 @@ class FilledPosition(PendingPosition):
         """.format(sid, pid)
         rec = pd.read_sql(qry, conn, index_col=["id"]).iloc[0]
         # Extract variables.
-        quantity = int(rec["quantity"])
         date_entered = rec["date_entered"]
         avg_price = float(rec["avg_price"])
         buys, sells = int(rec["buys"]), int(rec["sells"])
@@ -219,8 +227,16 @@ class FilledPosition(PendingPosition):
         trade_type = TradeTypes(rec["trade_type"])
         # Return a filled position object populated from the database.
         return cls(
-            symbol, quantity, direction, trade_type, portfolio_id, date_entered,
-            avg_price, buys, sells, avg_buys_price, avg_sells_price,
+            symbol,
+            direction,
+            trade_type,
+            portfolio_id,
+            date_entered,
+            avg_price,
+            buys,
+            sells,
+            avg_buys_price,
+            avg_sells_price,
             tot_commission
         )
 
@@ -230,7 +246,11 @@ class FilledPosition(PendingPosition):
         data stored in a pending position object.
         """
         return cls(
-            pending.symbol, pending.quantity, pending.direction,
-            pending.trade_type, pending.portfolio_id, date, price,
+            pending.symbol,
+            pending.direction,
+            pending.trade_type,
+            pending.portfolio_id,
+            date,
+            price,
         )
 

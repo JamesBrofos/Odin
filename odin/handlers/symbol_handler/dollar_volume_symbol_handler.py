@@ -11,7 +11,7 @@ class DollarVolumeSymbolHandler(AbstractSymbolHandler):
     The symbol handler ignores the S&P 100 and S&P 500 indices which have huge
     volume.
     """
-    def __init__(self, n, symbols=None):
+    def __init__(self, n, portfolio_handlers, symbols=None):
         """Initialize parameters of the dollar volume symbol handler object.
 
         Parameters
@@ -24,6 +24,7 @@ class DollarVolumeSymbolHandler(AbstractSymbolHandler):
             An input specifying a particular list of tickers to which the dollar
             volume ordering should be restricted.
         """
+        super(DollarVolumeSymbolHandler, self).__init__(portfolio_handlers)
         self.n = n
         self.symbols = symbols
 
@@ -32,4 +33,6 @@ class DollarVolumeSymbolHandler(AbstractSymbolHandler):
         bars = gets.prices(date, symbols=self.symbols)
         dv = bars.ix["adj_price_close", -1, :] * bars.ix["adj_volume", -1, :]
         rank = dv.sort_values(ascending=False).dropna()
-        return rank.index.drop(untradeable_assets, errors="ignore")[:self.n]
+        return self.append_positions(
+            list(rank.index.drop(untradeable_assets, errors="ignore")[:self.n])
+        )

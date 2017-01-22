@@ -1,4 +1,4 @@
-# Odin 1.03
+# Odin 1.3
 
 A algorithmic trading platform developed in Python. The platform is built to support both research-driven backtesting as well as production deployment for live trading. Odin can be used for either live trading through Interactive Brokers or simulated backtesting. The software currently exists in an alpha state and is actively seeking developers to add features and fix programmatic errors.
 

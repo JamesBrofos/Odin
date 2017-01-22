@@ -14,7 +14,7 @@ class TestPosition(unittest.TestCase):
         date = dt.datetime.today()
         price = 100.0
         update_price = 101.0
-        pos = FilledPosition(s, q, d, t, pid, date, price)
+        pos = FilledPosition(s, d, t, pid, date, price)
         pos.transact_shares(a, q, price)
         pos.to_database_position()
 
@@ -38,7 +38,7 @@ class TestPosition(unittest.TestCase):
         date = dt.datetime.today()
         price = 100.0
         update_price = 101.0
-        pos = FilledPosition(s, q, d, t, pid, date, price)
+        pos = FilledPosition(s, d, t, pid, date, price)
         pos.transact_shares(a, q, price)
         pos.update_market_value(update_price)
         self.assertEqual(
@@ -74,7 +74,7 @@ class TestPosition(unittest.TestCase):
         date = dt.datetime.today()
         price = 100.0
         update_price = 101.0
-        pos = FilledPosition(s, q, d, t, pid, date, price)
+        pos = FilledPosition(s, d, t, pid, date, price)
         pos.transact_shares(a, q, price)
         pos.update_market_value(update_price)
         self.assertEqual(

@@ -13,8 +13,6 @@ symbols = [Indices.sp_500_etf.value]
 init_capital = 100000.0
 # Only hold a single position.
 maximum_capacity = 1
-rebalance_period = 1
-manage_period = 1
 
 # Account and fund identifiers.
 pid = "buy_and_hold_example_portfolio"

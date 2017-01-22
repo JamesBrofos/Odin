@@ -14,7 +14,7 @@ class ExecutionHandlerTest(unittest.TestCase):
         """
         q = EventsQueue()
         symbol = "SPY"
-        sh = FixedSymbolHandler([symbol])
+        sh = FixedSymbolHandler([symbol], [])
         start, end = dt.datetime(2015, 1, 2), dt.datetime(2015, 1, 9)
         dh = DatabaseDataHandler(q, sh, start, end, 10)
         dh.request_prices()
