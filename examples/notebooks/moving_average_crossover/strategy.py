@@ -1,9 +1,13 @@
 import pandas as pd
-from odin.strategy import AbstractStrategy
-from odin.strategy.templates import BuyAndHoldStrategy
+from odin.utilities.mixins.strategy_mixins import (
+    LongStrategyMixin,
+    EqualProportionMixin
+)
 
 
-class MovingAverageCrossoverStrategy(AbstractStrategy):
+class MovingAverageCrossoverStrategy(
+    LongStrategyMixin, EqualProportionMixin
+):
     def __init__(self, portfolio, direction):
         """Initialize parameters of the buy and hold strategy object."""
         super(MovingAverageCrossoverStrategy, self).__init__(portfolio)

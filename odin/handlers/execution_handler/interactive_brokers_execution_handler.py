@@ -109,6 +109,7 @@ class InteractiveBrokersExecutionHandler(
             "trade_type": order_event.trade_type,
             "direction": order_event.direction,
             "portfolio_id": order_event.portfolio_id,
+            "order": order_event
         }
         self.conn.placeOrder(self.order_id, c, o)
         sleep(2)

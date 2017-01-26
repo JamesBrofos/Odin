@@ -1,8 +1,12 @@
 import pandas as pd
 from ..abstract_strategy import AbstractStrategy
+from ...utilities.mixins.strategy_mixins import (
+    LongStrategyMixin,
+    EqualProportionMixin
+)
 
 
-class BuyAndHoldStrategy(AbstractStrategy):
+class BuyAndHoldStrategy(LongStrategyMixin, EqualProportionMixin):
     """Buy And Hold Strategy Class
 
     The buy and hold strategy is a passive approach to investing where a
@@ -10,14 +14,14 @@ class BuyAndHoldStrategy(AbstractStrategy):
     taken up. This is a strategy that is both very scalable and suitable for
     backtesting core functionalities.
     """
-    def __init__(self, portfolio, direction):
-        """Initialize parameters of the buy and hold strategy object."""
-        super(BuyAndHoldStrategy, self).__init__(portfolio)
-        self.direction = direction
+    # def __init__(self, portfolio, direction):
+    #     """Initialize parameters of the buy and hold strategy object."""
+    #     super(BuyAndHoldStrategy, self).__init__(portfolio)
+    #     self.direction = direction
 
-    def direction_indicator(self, feats):
-        """Implementation of abstract base class method."""
-        return self.direction
+    # def direction_indicator(self, feats):
+    #     """Implementation of abstract base class method."""
+    #     return self.direction
 
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""

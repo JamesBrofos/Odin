@@ -29,11 +29,9 @@ class SimulatedExecutionHandler(AbstractExecutionHandler):
         # Construct quantities for the simulated fill event.
         symbol = order_event.symbol
         quantity = order_event.quantity
-        trade_type = order_event.trade_type
-        direction = order_event.direction
-        action = params.action_dict[(direction, trade_type)]
-        datetime = order_event.datetime
-        pid = order_event.portfolio_id
+        action = params.action_dict[
+            (order_event.direction, order_event.trade_type)
+        ]
 
         # Assume the fill price to be the average of the day's high and low and
         # incorporate transaction costs. If the action is to sell the asset,
@@ -54,8 +52,7 @@ class SimulatedExecutionHandler(AbstractExecutionHandler):
 
         # Place the fill event in the queue.
         commission = params.ib_commission(quantity, fill_price)
-        fill_event = FillEvent(
-            symbol, quantity, trade_type, direction, fill_cost, commission,
-            datetime, pid, self.is_live
+        fill_event = FillEvent.from_order_event(
+            order_event, fill_cost, commission, self.is_live
         )
         self.events.put(fill_event)

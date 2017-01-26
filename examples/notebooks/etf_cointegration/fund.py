@@ -11,12 +11,11 @@ import handlers
 # Generate objects for the portfolios and strategies that the fund will trade.
 portfolios = [
     SimulatedPortfolio(handlers.dh, handlers.posh, handlers.porth),
-    SimulatedPortfolio(handlers.dh, handlers.posh_bench, handlers.porth_bench),
 ]
 strategies = [
-    strategy.RebalanceETFStrategy(portfolios[0]),
-    strategy.BuyAndHoldSpyderStrategy(portfolios[1]),
+    strategy.CointegratedETFStrategy(portfolios[0]),
 ]
+
 # Create the fund and fund handler objects.
 fh = FundHandler(
     handlers.events, strategies, settings.start_date, settings.fid

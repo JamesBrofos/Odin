@@ -82,7 +82,7 @@ def solve_markowitz(prices, omega=1.0):
     opt = X[sharpe.argmax()]
     cols = list(pct.columns)
     cols.extend(["reward", "risk"])
-    ret = pd.Series({c: opt[i] for i, c in enumerate(cols)})
+    ret = {c: opt[i] for i, c in enumerate(cols)}
 
     # Return the weights, the expected reward, and the risk as a Pandas series.
     return ret

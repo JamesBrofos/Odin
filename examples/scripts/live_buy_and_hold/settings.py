@@ -4,8 +4,6 @@ from odin.utilities import params
 from odin.utilities.finance import Indices
 
 
-# Start date and end date of the time series.
-start_date = end_date = dt.datetime.today()
 # Only trade the S&P 500 ETF.
 symbols = [Indices.sp_500_etf.value]
 

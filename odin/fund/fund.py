@@ -20,8 +20,7 @@ class Fund(object):
     data_handler: Object inheriting from the abstract data handler class.
         This object supplies the data to update the prices of held positions and
         provide new bar data with which to construct features.
-    execution_handler: Object inheriting from the abstract execution handler
-        class.
+    execution_handler: Object inheriting from the execution handler class.
         The execution handler is responsible for executing trades as they are
         placed by the portfolio object.
     fund_handler: Fund handler object.
@@ -106,16 +105,18 @@ class Fund(object):
                 if verbosity_dict[e_type] <= self.verbosity_level:
                     print(e)
 
-            # Perform processing after all of the time periods events have been
-            # processed.
-            for p in ports:
-                p.process_post_events()
-                if Verbosities.portfolio.value <= self.verbosity_level:
-                    print(p.portfolio_handler.state)
+            else:
+                # Perform processing after all of the time periods events have
+                # been processed.
+                for p in ports:
+                    p.process_post_events()
+                    if Verbosities.portfolio.value <= self.verbosity_level:
+                        print(p.portfolio_handler.state)
+
+                # Update the historical price record.
+                dh.update()
 
             # Delay the acquisition of new market data.
             if self.delay > 0:
                 sleep(self.delay)
 
-            # Update the historical price record.
-            dh.update()

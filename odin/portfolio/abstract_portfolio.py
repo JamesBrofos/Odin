@@ -99,14 +99,12 @@ class AbstractPortfolio(object):
         # of the underlying asset to trade is at least one.
         if self.portfolio_handler.is_tradeable(trade_type):
             quantity = self.position_handler.order_sizer[trade_type](
-                symbol, self.portfolio_handler
+                signal_event, self.portfolio_handler
             )
 
             if quantity > 0:
-                order_event = OrderEvent(
-                    symbol, quantity, signal_event.trade_type,
-                    signal_event.direction, signal_event.datetime,
-                    self.portfolio_handler.portfolio_id
+                order_event = OrderEvent.from_signal_event(
+                    signal_event, quantity
                 )
                 self.data_handler.events.put(order_event)
                 if trade_type == TradeTypes.buy_trade:

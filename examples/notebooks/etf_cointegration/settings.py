@@ -5,10 +5,10 @@ from odin.utilities.finance import Indices
 
 
 # Start date and end date of the time series.
-start_date = dt.datetime(2006, 1, 1)
-end_date = dt.datetime(2016, 12, 30)
+start_date = dt.datetime(2014, 1, 1)
+end_date = dt.datetime(2017, 1, 1)
 # Trade ETFs.
-symbols = ["SPY", "AGG"]
+symbols = ["ARNC", "UNG"]
 
 # Start trading will $100,000 in capital initially.
 init_capital = 100000.0
@@ -16,10 +16,9 @@ init_capital = 100000.0
 maximum_capacity = 2
 
 # Number of prior trading days to download at the start of the time series.
-n_init = 10
+n_init = 500
 # Set an identifier for the portfolio.
-pid = "weighted_etfs"
-pid_bench = "spyder_etf"
+pid = "cointegrated_etf"
 fid = "fund"
 # Assume that transacting shares moves the price by five-hundredths of a basis
 # point.

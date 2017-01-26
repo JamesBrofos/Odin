@@ -12,7 +12,7 @@ portfolios = [
     SimulatedPortfolio(handlers.dh, handlers.posh, handlers.porth),
 ]
 strategies = [
-    BuyAndHoldStrategy(portfolios[0], params.Directions.long_dir),
+    BuyAndHoldStrategy(portfolios[0]),
 ]
 # Create the fund and fund handler objects.
 fh = FundHandler(

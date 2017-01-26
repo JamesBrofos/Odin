@@ -15,8 +15,7 @@ class FillEvent(PortfolioEvent):
     ):
         """Initialize parameters of the fill event object."""
         super(FillEvent, self).__init__(
-            symbol, trade_type, direction, Events.fill, datetime,
-            portfolio_id
+            symbol, trade_type, direction, Events.fill, datetime, portfolio_id
         )
         self.quantity = quantity
         self.fill_cost = fill_cost
@@ -27,7 +26,28 @@ class FillEvent(PortfolioEvent):
     def __str__(self):
         """String representation of the fill event object."""
         return "{}\t{}\t{}\t{}\t{}\t{}\t{:0.2f}".format(
-            self.event_type, self.datetime.strftime(IOFiles.date_format.value),
-            self.symbol, self.direction, self.trade_type, self.quantity,
+            self.event_type,
+            self.datetime.strftime(IOFiles.date_format.value),
+            self.symbol,
+            self.direction,
+            self.trade_type,
+            self.quantity,
             self.fill_cost
+        )
+
+    @classmethod
+    def from_order_event(cls, order_event, fill_cost, commission, is_live):
+        """Create a fill event object from the corresponding information in an
+        order event object.
+        """
+        return cls(
+            order_event.symbol,
+            order_event.quantity,
+            order_event.trade_type,
+            order_event.direction,
+            fill_cost,
+            commission,
+            order_event.datetime,
+            order_event.portfolio_id,
+            is_live
         )

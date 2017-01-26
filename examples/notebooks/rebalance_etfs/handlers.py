@@ -2,9 +2,8 @@ import os
 import pickle
 from odin.events import EventsQueue
 from odin.handlers.portfolio_handler import PortfolioHandler
-from odin.handlers.position_handler import (
-    FixedWeightPositionHandler,
-    EqualEquityPositionHandler
+from odin.handlers.position_handler.templates import (
+    SuggestedProportionPositionHandler
 )
 from odin.handlers.execution_handler import SimulatedExecutionHandler
 from odin.handlers.symbol_handler import FixedSymbolHandler
@@ -39,5 +38,5 @@ dh = DatabaseDataHandler(
 eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
 
 # Position handler to determine how much of an asset to purchase.
-posh = FixedWeightPositionHandler(settings.weights, dh)
-posh_bench = EqualEquityPositionHandler(1, dh)
+posh = SuggestedProportionPositionHandler(dh)
+posh_bench = SuggestedProportionPositionHandler(dh)

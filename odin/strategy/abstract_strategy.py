@@ -39,10 +39,6 @@ class AbstractStrategy(object):
         events = self.portfolio.data_handler.events
         ph = self.portfolio.portfolio_handler
 
-        # Create an indicator variable for whether or not the primary strategy
-        # generates trading signals. This is only relevant when there is a
-        # secondary asset to occupy idle capital.
-        will_trade = False
         # Iterate over the underlying assets in the data handler. For those
         # assets that do not yet have an associated position in the portfolio,
         # consider them for purchase; otherwise, consider the position for
@@ -54,30 +50,33 @@ class AbstractStrategy(object):
                 # Process assets that are already held as positions.
                 sell_trade_indicator = True
                 if self.sell_indicator(stock_feat):
+                    # Selling a position. We determine the fraction of the
+                    # position that should be liquidated.
                     trade_type = TradeTypes.sell_trade
+                    prop = self.compute_proportion(stock_feat)
                 elif self.exit_indicator(stock_feat):
+                    # Exiting a position entirely; hence, the fraction of the
+                    # position to sell is unity.
                     trade_type = TradeTypes.exit_trade
+                    prop = 1.0
                 else:
                     sell_trade_indicator = False
 
                 if sell_trade_indicator:
-                    will_trade = True
                     direction = ph.filled_positions[stock].direction
                     signal_event = SignalEvent(
-                        stock, trade_type, direction, date, pid
+                        stock, prop, trade_type, direction, date, pid
                     )
                     events.put(signal_event)
             else:
                 # Process assets that are candidates to become new positions.
                 if self.buy_indicator(stock_feat):
-                    direction = self.direction_indicator(stock_feat)
-                    will_trade = True
+                    direction = self.compute_direction(stock_feat)
+                    prop = self.compute_proportion(stock_feat)
                     signal_event = SignalEvent(
-                        stock, TradeTypes.buy_trade, direction, date, pid
+                        stock, prop, TradeTypes.buy_trade, direction, date, pid
                     )
                     events.put(signal_event)
-
-        return will_trade
 
     def close(self):
         """This function issues signal events that exit every position held by
@@ -95,9 +94,17 @@ class AbstractStrategy(object):
             self.portfolio.data_handler.events.put(signal_event)
 
     @abstractmethod
-    def direction_indicator(self, feats):
+    def compute_direction(self, feats):
         """Indicator of which direction (long or short) the strategy to trade a
         specific asset.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def compute_proportion(self, feats):
+        """Determine the recommended proportion of capital to allocate toward
+        this position. This proportion will either be heeded or modified by the
+        position handler object for the associated portfolio.
         """
         raise NotImplementedError()
 

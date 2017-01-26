@@ -4,8 +4,6 @@ from odin.utilities import params
 from odin.utilities.finance import Indices
 
 
-# Start date and end date of the time series.
-start_date = end_date = dt.datetime.today()
 # Only trade the S&P 500 ETF.
 symbols = [Indices.sp_500_etf.value]
 
@@ -15,8 +13,8 @@ init_capital = 100000.0
 maximum_capacity = 1
 
 # Account and fund identifiers.
-pid = "buy_and_hold_example_portfolio"
-fid = "buy_and_hold_example_fund"
+pid = "buy_and_sell_example_portfolio"
+fid = "buy_and_sell_example_fund"
 
 # Number of prior trading days to download at the start of the time series.
 n_init = 10
