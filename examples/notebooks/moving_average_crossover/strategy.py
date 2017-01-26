@@ -8,15 +8,6 @@ from odin.utilities.mixins.strategy_mixins import (
 class MovingAverageCrossoverStrategy(
     LongStrategyMixin, EqualProportionMixin
 ):
-    def __init__(self, portfolio, direction):
-        """Initialize parameters of the buy and hold strategy object."""
-        super(MovingAverageCrossoverStrategy, self).__init__(portfolio)
-        self.direction = direction
-
-    def direction_indicator(self, feats):
-        """Implementation of abstract base class method."""
-        return self.direction
-
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""
         return (

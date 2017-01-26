@@ -13,9 +13,7 @@ portfolios = [
     SimulatedPortfolio(handlers.dh, handlers.posh, handlers.porth),
 ]
 strategies = [
-    strategy.MovingAverageCrossoverStrategy(
-        portfolios[0], params.Directions.long_dir
-    ),
+    strategy.MovingAverageCrossoverStrategy(portfolios[0]),
 ]
 
 # Create the fund and fund handler objects.
