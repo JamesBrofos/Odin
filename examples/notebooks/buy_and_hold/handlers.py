@@ -1,5 +1,3 @@
-import os
-import pickle
 from odin.events import EventsQueue
 from odin.handlers.portfolio_handler import PortfolioHandler
 from odin.handlers.position_handler.templates import (
@@ -10,7 +8,6 @@ from odin.handlers.symbol_handler import FixedSymbolHandler
 from odin.handlers.data_handler import DatabaseDataHandler
 from odin.handlers.data_handler.price_handler import DatabasePriceHandler
 import settings
-
 
 
 # Create a portfolio handler to manage transactions and keeping track of

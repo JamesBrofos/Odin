@@ -31,7 +31,7 @@ class SimulatedFund(Fund):
         # and the equity and number of positions on a day-by-day basis.
         m = pd.DataFrame()
         self.history = pd.DataFrame(
-            index=self.fund_handler.portfolios[0].history.data.keys(),
+            index=self.fund_handler.portfolios[0].history.states.keys(),
             columns=["equity", "n_positions"]
         ).fillna(0.0)
 

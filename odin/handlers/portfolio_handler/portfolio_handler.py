@@ -28,10 +28,18 @@ class PortfolioHandler(EquityMixin):
     filled_positions (Optional): Dictionary.
         A dictionary of filled position objects mapping symbols to the
         corresponding fill representation.
+    filled_positions (Optional): Dictionary.
+        A dictionary of closed positions mapping datetimes to positions closed
+        at those times.
     """
     def __init__(
-            self, maximum_capacity, portfolio_id, capital,
-            fund_id, filled_positions=None
+            self,
+            maximum_capacity,
+            portfolio_id,
+            capital,
+            fund_id,
+            filled_positions=None,
+            closed_positions=None
     ):
         """Initialize parameters of the portfolio handler object."""
         self.maximum_capacity = maximum_capacity
@@ -39,6 +47,7 @@ class PortfolioHandler(EquityMixin):
         self.fund_id = fund_id
         self.capital = capital
         self.filled_positions = filled_positions if filled_positions else {}
+        self.closed_positions = closed_positions if closed_positions else {}
         self.pending_positions = {}
         self.state = PortfolioState(
             self.capital, self.filled_positions, self.maximum_capacity,
@@ -200,10 +209,11 @@ class PortfolioHandler(EquityMixin):
         # Extract variables.
         symbol = fill_event.symbol
         fill_cost = fill_event.fill_cost
-        price = fill_cost / fill_event.quantity
+        price = fill_event.price
         direction = fill_event.direction
         trade_type = fill_event.trade_type
         quantity = fill_event.quantity
+        datetime = fill_event.datetime
         action = action_dict[(direction, trade_type)]
 
         # Ensure validity of the symbol by ensuring that it is currently a
@@ -219,9 +229,12 @@ class PortfolioHandler(EquityMixin):
         # Transact shares and evaluate whether or not the position has been
         # fully liquidated.
         filled.transact_shares(action, quantity, price)
+
         if filled.quantity == 0:
-            # Delete from the dictionary of filled positions.
+            # Delete from the dictionary of filled positions and append the
+            # position to the list of closed positions.
             del self.filled_positions[symbol]
+            self.closed_positions.setdefault(datetime, []).append(filled)
 
             # If we are live trading, then for compliance purposes mark the
             # position as being closed but have it retained.

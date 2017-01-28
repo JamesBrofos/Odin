@@ -22,7 +22,7 @@ class PortfolioHistory(object):
     def __init__(self, portfolio_id):
         """Initialize parameters of the portfolio history object."""
         self.portfolio_id = portfolio_id
-        self.data = OrderedDict()
+        self.states = OrderedDict()
 
     def add_state(self, date, portfolio_state):
         """Update the dictionary of portfolio states ordered by dates by
@@ -37,7 +37,7 @@ class PortfolioHistory(object):
             portfolio on the provided date. In order to avoid memory problems, a
             copy of the state is made.
         """
-        self.data[date] = deepcopy(portfolio_state)
+        self.states[date] = deepcopy(portfolio_state)
 
     def compute_attributes(self):
         """Compute the historical time-series attribute curves for the
@@ -54,8 +54,8 @@ class PortfolioHistory(object):
         self.n_positions = pd.Series()
         # Iterate over each time period in the ordered dictionary of portfolio
         # states.
-        for date in self.data:
-            state = self.data[date]
+        for date in self.states:
+            state = self.states[date]
             self.n_positions.ix[date] = len(state.filled_positions)
             self.equity.ix[date] = state.equity
 
