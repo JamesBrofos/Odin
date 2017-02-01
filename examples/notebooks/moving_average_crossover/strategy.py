@@ -1,12 +1,14 @@
 import pandas as pd
 from odin.utilities.mixins.strategy_mixins import (
     LongStrategyMixin,
-    EqualProportionMixin
+    EqualBuyProportionMixin, 
+    TotalSellProportionMixin
 )
 
 
 class MovingAverageCrossoverStrategy(
-    LongStrategyMixin, EqualProportionMixin
+    LongStrategyMixin, EqualBuyProportionMixin, 
+    TotalSellProportionMixin
 ):
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""

@@ -29,7 +29,7 @@ dh = DatabaseDataHandler(
     events, sh, settings.start_date, settings.end_date, settings.n_init
 )
 # Execution handler executes trades.
-eh = SimulatedExecutionHandler(dh, settings.transaction_cost)
+eh = SimulatedExecutionHandler(dh)
 
 # Position handler to determine how much of an asset to purchase.
 posh = SuggestedProportionPositionHandler(dh)

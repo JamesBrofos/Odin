@@ -1,5 +1,5 @@
 from .portfolio_event import PortfolioEvent
-from ...utilities.params import Events
+from ...utilities.params import Events, IOFiles
 
 
 class SignalEvent(PortfolioEvent):
@@ -32,7 +32,7 @@ class SignalEvent(PortfolioEvent):
         """String representation of the signal event object."""
         return "{}\t{}\t{}\t{}\t{}".format(
             self.event_type,
-            self.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+            self.datetime.strftime(IOFiles.date_format.value),
             self.symbol,
             self.direction,
             self.trade_type

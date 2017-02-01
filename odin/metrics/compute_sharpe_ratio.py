@@ -27,4 +27,4 @@ def compute_sharpe_ratio(returns, periods=252.0):
         this corresponds to daily trades (because there are 252 trading sessions
         per year).
     """
-    return np.sqrt(periods) * np.mean(returns) / np.std(returns)
+    return np.sqrt(periods) * returns.mean() / returns.std()

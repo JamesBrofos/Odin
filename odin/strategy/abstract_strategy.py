@@ -53,7 +53,7 @@ class AbstractStrategy(object):
                     # Selling a position. We determine the fraction of the
                     # position that should be liquidated.
                     trade_type = TradeTypes.sell_trade
-                    prop = self.compute_proportion(stock_feat)
+                    prop = self.compute_sell_proportion(stock_feat)
                 elif self.exit_indicator(stock_feat):
                     # Exiting a position entirely; hence, the fraction of the
                     # position to sell is unity.
@@ -72,7 +72,7 @@ class AbstractStrategy(object):
                 # Process assets that are candidates to become new positions.
                 if self.buy_indicator(stock_feat):
                     direction = self.compute_direction(stock_feat)
-                    prop = self.compute_proportion(stock_feat)
+                    prop = self.compute_buy_proportion(stock_feat)
                     signal_event = SignalEvent(
                         stock, prop, TradeTypes.buy_trade, direction, date, pid
                     )
@@ -88,7 +88,7 @@ class AbstractStrategy(object):
         # signal for that position.
         for pos in self.portfolio.portfolio_handler.filled_positions.values():
             signal_event = SignalEvent(
-                pos.symbol, TradeTypes.exit_trade, pos.direction, date,
+                pos.symbol, 1.0, TradeTypes.exit_trade, pos.direction, date,
                 self.portfolio.portfolio_handler.portfolio_id
             )
             self.portfolio.data_handler.events.put(signal_event)
@@ -101,10 +101,18 @@ class AbstractStrategy(object):
         raise NotImplementedError()
 
     @abstractmethod
-    def compute_proportion(self, feats):
+    def compute_buy_proportion(self, feats):
         """Determine the recommended proportion of capital to allocate toward
         this position. This proportion will either be heeded or modified by the
         position handler object for the associated portfolio.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def compute_sell_proportion(self, feats):
+        """Similar to the function that computes the proportion of equity to
+        invest in a position, this function computes the proportions of an
+        existing position to liquidate.
         """
         raise NotImplementedError()
 

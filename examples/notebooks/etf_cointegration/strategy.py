@@ -4,11 +4,13 @@ from odin.strategy import AbstractStrategy
 from odin.strategy.templates import BuyAndHoldStrategy
 from odin.utilities.params import Directions
 from odin.utilities.mixins.strategy_mixins import (
-    EqualProportionMixin
+    EqualBuyProportionMixin, TotalSellProportionMixin
 )
 
 
-class CointegratedETFStrategy(EqualProportionMixin):  
+class CointegratedETFStrategy(
+    EqualBuyProportionMixin, TotalSellProportionMixin
+):  
     def compute_direction(self, feats):
         """Implementation of abstract base class method."""
         if feats.name == "ARNC":

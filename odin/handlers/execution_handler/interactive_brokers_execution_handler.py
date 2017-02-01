@@ -61,21 +61,16 @@ class InteractiveBrokersExecutionHandler(
             o = self.orders[msg.orderId]
             if not o["filled"]:
                 # Extract variables upon order fill.
-                order_id = msg.orderId
-                symbol = o["symbol"]
-                quantity = msg.filled
-                trade_type = o["trade_type"]
-                direction = o["direction"]
+                order_event = o["order"]
                 fill_cost = msg.avgFillPrice * quantity
                 commission = ib_commission(quantity, msg.avgFillPrice)
-                datetime = dt.datetime.today()
-                pid = o["portfolio_id"]
-                is_live = self.is_live
                 # Place the fill event into the queue and mark the order as
                 # completed.
-                fill_event = FillEvent(
-                    symbol, quantity, trade_type, direction, fill_cost,
-                    commission, datetime, pid, is_live
+                fill_event = FillEvent.from_order_event(
+                    order_event,
+                    fill_cost,
+                    commission,
+                    self.is_live
                 )
                 o["filled"] = True
                 self.events.put(fill_event)
@@ -105,10 +100,6 @@ class InteractiveBrokersExecutionHandler(
         o = self.create_order(action, quantity)
         self.orders[self.order_id] = {
             "filled": False,
-            "symbol": symbol,
-            "trade_type": order_event.trade_type,
-            "direction": order_event.direction,
-            "portfolio_id": order_event.portfolio_id,
             "order": order_event
         }
         self.conn.placeOrder(self.order_id, c, o)

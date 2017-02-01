@@ -17,11 +17,8 @@ maximum_capacity = 1
 # Number of prior trading days to download at the start of the time series.
 n_init = 10
 # Set an identifier for the portfolio.
-pid = "long_buy_and_hold"
+pid = "buy_and_hold"
 fid = "fund"
-# Assume that transacting shares moves the price by five-hundredths of a basis
-# point.
-transaction_cost = 0.0005
 
 # Set verbosity level.
 verbosity = 1

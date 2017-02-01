@@ -23,7 +23,19 @@ class AbstractSymbolHandler(object):
         raise NotImplementedError()
 
     def append_positions(self, selected):
-        """"""
+        """If a fund (which consists of portfolios) holds positions, then it is
+        critical that price and volume data be available for those positions.
+        Otherwise, trading events may be missed. As such, this method ensures
+        that all positions present in a fund's portfolios have price data
+        requested.
+
+        Parameters
+        ----------
+        selected: List of symbols.
+            A list of symbols that have been selected to have price and volume
+            data queried from the database. This list will have the current
+            positions of the fund appended to it.
+        """
         set_selected = set(selected)
         for p in self.portfolio_handlers:
             for pos in p.filled_positions:

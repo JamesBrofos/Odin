@@ -6,11 +6,37 @@ import matplotlib.dates as mdates
 from matplotlib.ticker import FuncFormatter
 from matplotlib import cm
 from .compute_drawdowns import compute_drawdowns
+from .compute_sharpe_ratio import compute_sharpe_ratio
 
 
 class Visualizer(object):
     """Fund Performance Visualizer Class
+
+    This visualizer object is intended to provide access to a number of
+    plotting utilities for visualizing the performance of the constituent
+    portfolios of a fund. Support is provided for basic plots, such as the
+    equity curve and drawdowns, as well as more specialized plots such as the
+    rolling Sharpe ratio of the portfolios and month-over-month performance
+    summaries.
     """
+    def rolling_sharpe(self, window, fund, ax=None):
+        if ax is None:
+            ax = plt.gca()
+
+        for i, p in enumerate(fund.fund_handler.portfolios):
+            rets = p.history.returns.rolling(window=window)
+            rs = compute_sharpe_ratio(rets)
+            ax.plot(
+                rs.index, rs, lw=2.,
+                label=p.portfolio_handler.portfolio_id.title()
+            )
+
+        ax.set_xlabel("Date", fontsize=15.)
+        ax.set_ylabel("Rolling Sharpe Ratio ({})".format(window))
+        ax.legend(loc="upper left")
+        ax.grid(True)
+
+        return ax
 
     def equity(self, fund, ax=None):
         if ax is None:
