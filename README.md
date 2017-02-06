@@ -15,10 +15,7 @@ This software is provided under the MIT license.
 * **Fund Simulation** Odin can also simulate funds consisting of multiple portfolios trading their own strategies. For funds, Odin can also perform portfolio equity rebalancing to prevent the equity levels from becoming too lopsided toward a few strategies. Furthermore, Odin will also deduct management fees from the equity levels if so desired.
 * **Low-Level Control** Odin allows the user to wield low-level control over the way data is processed. Odin provides control over which ticker symbols are traded, how much equity is transacted in taking up a position, as well as abstract templates that allow users of the software to define their own handlers for use in trading.
 
-Odin is constantly being worked on and improved by its developers. We would be happy to receive pull requests if you have a feature or a bug fix that you want to see included in the main software. Feel free to open a pull request.
-
-Please refer to Odin's issues page for a (partial) list of improvements and planned features that we are aiming on incorporating into Odin.
-
+Please refer to `CONTRIBUTING.md` for instructions on how you can contribute to Odin yourself!
 
 ## Installation
 
