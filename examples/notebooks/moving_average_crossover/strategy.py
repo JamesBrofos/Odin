@@ -1,14 +1,20 @@
 import pandas as pd
+from odin.strategy.indicators import MovingAverage as MA
 from odin.utilities.mixins.strategy_mixins import (
     LongStrategyMixin,
     EqualBuyProportionMixin, 
-    TotalSellProportionMixin
+    TotalSellProportionMixin,
+    DefaultPriorityMixin,
+    NeverSellIndicatorMixin
 )
 
 
 class MovingAverageCrossoverStrategy(
-    LongStrategyMixin, EqualBuyProportionMixin, 
-    TotalSellProportionMixin
+    LongStrategyMixin, 
+    EqualBuyProportionMixin, 
+    TotalSellProportionMixin,
+    DefaultPriorityMixin,
+    NeverSellIndicatorMixin
 ):
     def buy_indicator(self, feats):
         """Implementation of abstract base class method."""
@@ -16,10 +22,6 @@ class MovingAverageCrossoverStrategy(
             feats.name == "AAPL" and
             feats["short_mavg"] > feats["long_mavg"]
         )
-
-    def sell_indicator(self, feats):
-        """Implementation of abstract base class method."""
-        return False
 
     def exit_indicator(self, feats):
         """Implementation of abstract base class method."""
@@ -29,15 +31,8 @@ class MovingAverageCrossoverStrategy(
 
     def generate_features(self):
         """Implementation of abstract base class method."""
-        long_bars = self.portfolio.data_handler.bars.ix[:, -200:, :]
-        short_bars = self.portfolio.data_handler.bars.ix[:, -50:, :]
-        feats = pd.DataFrame(index=short_bars.minor_axis)
-        feats["long_mavg"] = long_bars["adj_price_close"].mean()
-        feats["short_mavg"] = short_bars["adj_price_close"].mean()
+        series = self.portfolio.data_handler.bars["adj_price_close"]
+        feats = pd.DataFrame(index=series.columns)
+        feats["long_mavg"] = MA(200).simple_moving_average(series)
+        feats["short_mavg"] = MA(50).simple_moving_average(series)
         return feats
-
-    def generate_priority(self, feats):
-        """Implementation of abstract base class method."""
-        return self.portfolio.data_handler.bars.ix[
-            "adj_price_open", -1, :
-        ].dropna().index

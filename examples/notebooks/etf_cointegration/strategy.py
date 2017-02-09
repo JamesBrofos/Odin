@@ -4,12 +4,18 @@ from odin.strategy import AbstractStrategy
 from odin.strategy.templates import BuyAndHoldStrategy
 from odin.utilities.params import Directions
 from odin.utilities.mixins.strategy_mixins import (
-    EqualBuyProportionMixin, TotalSellProportionMixin
+    EqualBuyProportionMixin,
+    TotalSellProportionMixin,
+    NeverSellIndicatorMixin,
+    DefaultPriorityMixin
 )
 
 
 class CointegratedETFStrategy(
-    EqualBuyProportionMixin, TotalSellProportionMixin
+    EqualBuyProportionMixin,
+    TotalSellProportionMixin,
+    NeverSellIndicatorMixin,
+    DefaultPriorityMixin
 ):  
     def compute_direction(self, feats):
         """Implementation of abstract base class method."""
@@ -31,10 +37,6 @@ class CointegratedETFStrategy(
             feats["z-score"] > 1.5
         )
 
-    def sell_indicator(self, feats):
-        """Implementation of abstract base class method."""
-        return False
-
     def exit_indicator(self, feats):
         """Implementation of abstract base class method."""
         pos = self.portfolio.portfolio_handler.filled_positions["ARNC"]
@@ -48,14 +50,8 @@ class CointegratedETFStrategy(
         """Implementation of abstract base class method."""
         bars = self.portfolio.data_handler.bars.ix[:, -15:, :]
         prices = bars["adj_price_close"]
-        weights = np.array([1.0, -1.213])
+        weights = np.array([1.0, -1.])
         feats = pd.DataFrame(index=bars.minor_axis)
         ts = prices.dot(weights)
         feats["z-score"] = (ts.ix[-1] - ts.mean()) / ts.std()
         return feats
-
-    def generate_priority(self, feats):
-        """Implementation of abstract base class method."""
-        return self.portfolio.data_handler.bars.ix[
-            "adj_price_open", -1, :
-        ].dropna().index

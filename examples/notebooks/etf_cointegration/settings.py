@@ -5,7 +5,7 @@ from odin.utilities.finance import Indices
 
 
 # Start date and end date of the time series.
-start_date = dt.datetime(2014, 1, 1)
+start_date = dt.datetime(2012, 1, 1)
 end_date = dt.datetime(2017, 1, 1)
 # Trade ETFs.
 symbols = ["ARNC", "UNG"]

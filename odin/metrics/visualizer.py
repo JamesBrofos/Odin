@@ -1,3 +1,4 @@
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,6 +6,7 @@ import matplotlib.gridspec as gridspec
 import matplotlib.dates as mdates
 from matplotlib.ticker import FuncFormatter
 from matplotlib import cm
+from ..utilities.params import Directions
 from .compute_drawdowns import compute_drawdowns
 from .compute_sharpe_ratio import compute_sharpe_ratio
 
@@ -19,6 +21,40 @@ class Visualizer(object):
     rolling Sharpe ratio of the portfolios and month-over-month performance
     summaries.
     """
+    def long_short_equity(self, fund, ax=None):
+        if ax is None:
+            ax = plt.gca()
+
+        for i, p in enumerate(fund.fund_handler.portfolios):
+            states = p.history.states
+            dates = list(states.keys())
+            columns = ("long", "short", "ratio")
+            equity = pd.DataFrame(index=dates, columns=columns)
+            for d in dates:
+                filled = states[d].filled_positions
+                equity.ix[d, "long"] = np.sum([
+                    f.relative_value for f in filled.values()
+                    if f.direction == Directions.long_dir
+                ])
+                equity.ix[d, "short"] = np.sum([
+                    f.relative_value for f in filled.values()
+                    if f.direction == Directions.short_dir
+                ])
+                equity["ratio"] = equity["long"] / (equity["long"] + equity["short"])
+
+            for v in ("long", "short"):
+                ax.plot(
+                    equity.index, equity[v], lw=2.,
+                    label="_".join((p.portfolio_handler.portfolio_id, v))
+                )
+
+        ax.set_xlabel("Date", fontsize=15.)
+        ax.set_ylabel("Long / Short Equity", fontsize=15.)
+        ax.legend(loc="upper left")
+        ax.grid(True)
+
+        return ax
+
     def rolling_sharpe(self, window, fund, ax=None):
         if ax is None:
             ax = plt.gca()
@@ -32,7 +68,9 @@ class Visualizer(object):
             )
 
         ax.set_xlabel("Date", fontsize=15.)
-        ax.set_ylabel("Rolling Sharpe Ratio ({})".format(window))
+        ax.set_ylabel(
+            "Rolling Sharpe Ratio ({})".format(window), fontsize=15.
+        )
         ax.legend(loc="upper left")
         ax.grid(True)
 
