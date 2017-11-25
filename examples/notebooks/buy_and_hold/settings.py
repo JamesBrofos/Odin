@@ -5,7 +5,7 @@ from odin.utilities import params
 
 # Start date and end date of the time series.
 start_date = dt.datetime(2006, 1, 1)
-end_date = dt.datetime(2016, 12, 30)
+end_date = dt.datetime(2017, 11, 24)
 # Only trade the S&P 500 ETF.
 symbols = ["SPY"]
 

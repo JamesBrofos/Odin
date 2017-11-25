@@ -44,7 +44,7 @@ class Visualizer(object):
 
             for v in ("long", "short"):
                 ax.plot(
-                    equity.index, equity[v], lw=2.,
+                    equity.index.to_pydatetime(), equity[v], lw=2.,
                     label="_".join((p.portfolio_handler.portfolio_id, v))
                 )
 
@@ -63,7 +63,7 @@ class Visualizer(object):
             rets = p.history.returns.rolling(window=window)
             rs = compute_sharpe_ratio(rets)
             ax.plot(
-                rs.index, rs, lw=2.,
+                rs.index.to_pydatetime(), rs, lw=2.,
                 label=p.portfolio_handler.portfolio_id.title()
             )
 
@@ -82,7 +82,7 @@ class Visualizer(object):
 
         for i, p in enumerate(fund.fund_handler.portfolios):
             ax.plot(
-                p.history.equity.index, p.history.equity, lw=2.,
+                p.history.equity.index.to_pydatetime(), p.history.equity, lw=2.,
                 label=p.portfolio_handler.portfolio_id.title()
             )
             ax.grid()
@@ -100,7 +100,8 @@ class Visualizer(object):
 
         for i, p in enumerate(fund.fund_handler.portfolios):
             ax.plot(
-                p.history.n_positions.index, p.history.n_positions, lw=2.,
+                p.history.n_positions.index.to_pydatetime(),
+                p.history.n_positions, lw=2.,
                 label=p.portfolio_handler.portfolio_id.title()
             )
             ax.grid()
@@ -119,7 +120,7 @@ class Visualizer(object):
         for i, p in enumerate(fund.fund_handler.portfolios):
             dd, dur = compute_drawdowns(p.history.equity, False)
             ax.plot(
-                dd.index, dd, lw=2.,
+                dd.index.to_pydatetime(), dd, lw=2.,
                 label=p.portfolio_handler.portfolio_id.title()
             )
             ax.grid()
@@ -138,7 +139,7 @@ class Visualizer(object):
         for i, p in enumerate(fund.fund_handler.portfolios):
             dd, dur = compute_drawdowns(p.history.equity, False)
             ax.plot(
-                dur.index, dur, lw=2.,
+                dur.index.to_pydatetime(), dur, lw=2.,
                 label=p.portfolio_handler.portfolio_id.title()
             )
             ax.grid()

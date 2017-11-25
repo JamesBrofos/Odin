@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import unittest
 from odin_securities.queries import gets
-from odin_securities.vendors import quandl, yahoo_finance
+from odin_securities.vendors import quandl
 
 
 class OdinSecuritiesTest(unittest.TestCase):
@@ -14,7 +14,6 @@ class OdinSecuritiesTest(unittest.TestCase):
 
     def test_valid_symbols(self):
         symbol = "^^^^"
-        self.assertFalse(yahoo_finance.check_valid_symbol(symbol))
         self.assertFalse(quandl.check_valid_symbol(symbol))
 
 if __name__ == "__main__":

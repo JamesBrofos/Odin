@@ -33,5 +33,6 @@ def performance_summary(history, portfolio_id):
     m.ix[portfolio_id, "annualized returns"] = (
         (1. + history.returns).prod() ** (252. / n)
     )
+    m.ix[portfolio_id, "prop positive days"] = (history.returns > 0.).mean()
 
     return m

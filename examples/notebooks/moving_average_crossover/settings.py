@@ -6,7 +6,7 @@ from odin.utilities.finance import Indices
 
 # Start date and end date of the time series.
 start_date = dt.datetime(2006, 1, 1)
-end_date = dt.datetime(2017, 1, 1)
+end_date = dt.datetime(2017, 11, 24)
 # Trade ETFs.
 symbols = ["AAPL"]
 

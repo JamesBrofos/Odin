@@ -1,12 +1,16 @@
 import datetime as dt
 import numpy as np
 from odin_securities.queries import gets
-from ....events import MarketEvent
 from .abstract_database_data_handler import AbstractDatabaseDataHandler
 from ..price_handler import DatabasePriceHandler
+from ....events import MarketEvent
+
 
 class DatabaseDataHandler(AbstractDatabaseDataHandler):
     """Database Data Handler Class
+
+    This class interfaces with the Odin Securities Postgres database to obtain
+    the price and volume data for the requested symbols.
     """
     def __init__(
             self, events, symbol_handler, start_date, end_date, n_init
